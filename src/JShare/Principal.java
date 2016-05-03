@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 
 import br.dagostini.jshare.comun.IServer;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
  
 
@@ -44,6 +46,8 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 	private JTextField txt_nome;
 	private JTextField txt_ip;
 	private JTextField txt_porta;
+	private JTable lista_arquivos;
+	
 
 	/**
 	 * Launch the application.
@@ -167,13 +171,16 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 		gbc_btn_cliente.gridy = 5;
 		contentPane.add(btn_cliente, gbc_btn_cliente);
 		
-		JPanel panel = new JPanel();
-		GridBagConstraints gbc_panel = new GridBagConstraints();
-		gbc_panel.gridwidth = 2;
-		gbc_panel.fill = GridBagConstraints.BOTH;
-		gbc_panel.gridx = 0;
-		gbc_panel.gridy = 6;
-		contentPane.add(panel, gbc_panel);
+		JScrollPane scrollPane = new JScrollPane();
+		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
+		gbc_scrollPane.gridwidth = 2;
+		gbc_scrollPane.fill = GridBagConstraints.BOTH;
+		gbc_scrollPane.gridx = 0;
+		gbc_scrollPane.gridy = 6;
+		contentPane.add(scrollPane, gbc_scrollPane);
+		
+		lista_arquivos = new JTable();
+		scrollPane.setViewportView(lista_arquivos);
 	}
 	
 	public void Servidor() {
@@ -227,7 +234,7 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 		cliente.setPorta(Integer.parseInt(txt_porta.getText()));
 	}
 	
-	
+	// manda uma mensagem
 	public void Mensagem(String msg) {
 		System.out.println(msg);
 	}
@@ -239,22 +246,19 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 	}
 
 	@Override
-	public void registrarCliente(br.dagostini.jshare.comun.Cliente c)
-			throws RemoteException {
+	public void registrarCliente(Cliente c) throws RemoteException {
+		
+		
+	}
+
+	@Override
+	public void publicarListaArquivos(Cliente c, List<Arquivo> lista) throws RemoteException {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void publicarListaArquivos(br.dagostini.jshare.comun.Cliente c,
-			List<Arquivo> lista) throws RemoteException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Map<br.dagostini.jshare.comun.Cliente, List<Arquivo>> procurarArquivo(
-			String nome) throws RemoteException {
+	public Map<Cliente, List<Arquivo>> procurarArquivo(String nome) throws RemoteException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -266,8 +270,7 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 	}
 
 	@Override
-	public void desconectar(br.dagostini.jshare.comun.Cliente c)
-			throws RemoteException {
+	public void desconectar(Cliente c) throws RemoteException {
 		// TODO Auto-generated method stub
 		
 	}
