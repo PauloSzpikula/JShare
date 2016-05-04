@@ -47,6 +47,8 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 	private JTextField txt_ip;
 	private JTextField txt_porta;
 	private JTable lista_arquivos;
+	private JTextField textField;
+	private JTextField textField_1;
 	
 
 	/**
@@ -75,45 +77,108 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWidths = new int[]{0, 0, 0};
-		gbl_contentPane.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_contentPane.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+		gbl_contentPane.columnWidths = new int[]{46, 112, 44, 169, 0, 0};
+		gbl_contentPane.rowHeights = new int[]{0, 0, 0, 22, 0, 0, 0, 0, 0, 0};
+		gbl_contentPane.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, 0.0, 1.0};
+		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 		contentPane.setLayout(gbl_contentPane);
 		
-		JLabel lblNewLabel = new JLabel("Nome");
+		JLabel lblNewLabel_4 = new JLabel("CONCENTRADOR");
+		GridBagConstraints gbc_lblNewLabel_4 = new GridBagConstraints();
+		gbc_lblNewLabel_4.gridwidth = 6;
+		gbc_lblNewLabel_4.insets = new Insets(0, 0, 5, 0);
+		gbc_lblNewLabel_4.gridx = 0;
+		gbc_lblNewLabel_4.gridy = 0;
+		contentPane.add(lblNewLabel_4, gbc_lblNewLabel_4);
+		
+		JButton btn_servidor = new JButton("Conectar");
+		btn_servidor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//Chama a função servidor
+				Servidor();
+			}
+		});
+		
+		JLabel lblNewLabel_3 = new JLabel("IP:");
+		GridBagConstraints gbc_lblNewLabel_3 = new GridBagConstraints();
+		gbc_lblNewLabel_3.insets = new Insets(0, 0, 5, 5);
+		gbc_lblNewLabel_3.gridx = 2;
+		gbc_lblNewLabel_3.gridy = 1;
+		contentPane.add(lblNewLabel_3, gbc_lblNewLabel_3);
+		
+		textField = new JTextField();
+		textField.setText("127.0.0.1");
+		GridBagConstraints gbc_textField = new GridBagConstraints();
+		gbc_textField.insets = new Insets(0, 0, 5, 5);
+		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
+		gbc_textField.gridx = 3;
+		gbc_textField.gridy = 1;
+		contentPane.add(textField, gbc_textField);
+		textField.setColumns(10);
+		
+		JLabel lblPorta = new JLabel("Porta");
+		GridBagConstraints gbc_lblPorta = new GridBagConstraints();
+		gbc_lblPorta.anchor = GridBagConstraints.EAST;
+		gbc_lblPorta.insets = new Insets(0, 0, 5, 5);
+		gbc_lblPorta.gridx = 4;
+		gbc_lblPorta.gridy = 1;
+		contentPane.add(lblPorta, gbc_lblPorta);
+		
+		textField_1 = new JTextField();
+		textField_1.setText("1818");
+		GridBagConstraints gbc_textField_1 = new GridBagConstraints();
+		gbc_textField_1.insets = new Insets(0, 0, 5, 0);
+		gbc_textField_1.fill = GridBagConstraints.HORIZONTAL;
+		gbc_textField_1.gridx = 5;
+		gbc_textField_1.gridy = 1;
+		contentPane.add(textField_1, gbc_textField_1);
+		textField_1.setColumns(10);
+		GridBagConstraints gbc_btn_servidor = new GridBagConstraints();
+		gbc_btn_servidor.anchor = GridBagConstraints.EAST;
+		gbc_btn_servidor.insets = new Insets(0, 0, 5, 0);
+		gbc_btn_servidor.gridx = 5;
+		gbc_btn_servidor.gridy = 2;
+		contentPane.add(btn_servidor, gbc_btn_servidor);
+		
+		JLabel lblNewLabel_5 = new JLabel("CLIENTE");
+		GridBagConstraints gbc_lblNewLabel_5 = new GridBagConstraints();
+		gbc_lblNewLabel_5.gridwidth = 6;
+		gbc_lblNewLabel_5.insets = new Insets(0, 0, 5, 0);
+		gbc_lblNewLabel_5.gridx = 0;
+		gbc_lblNewLabel_5.gridy = 3;
+		contentPane.add(lblNewLabel_5, gbc_lblNewLabel_5);
+		
+		JLabel lblNewLabel = new JLabel("Nome:");
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
-		gbc_lblNewLabel.anchor = GridBagConstraints.EAST;
 		gbc_lblNewLabel.gridx = 0;
-		gbc_lblNewLabel.gridy = 0;
+		gbc_lblNewLabel.gridy = 4;
 		contentPane.add(lblNewLabel, gbc_lblNewLabel);
 		
 		txt_nome = new JTextField();
 		txt_nome.setText("Paulo");
 		GridBagConstraints gbc_txt_nome = new GridBagConstraints();
-		gbc_txt_nome.insets = new Insets(0, 0, 5, 0);
+		gbc_txt_nome.insets = new Insets(0, 0, 5, 5);
 		gbc_txt_nome.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txt_nome.gridx = 1;
-		gbc_txt_nome.gridy = 0;
+		gbc_txt_nome.gridy = 4;
 		contentPane.add(txt_nome, gbc_txt_nome);
 		txt_nome.setColumns(10);
 		
 		JLabel lblNewLabel_1 = new JLabel("IP");
 		GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
-		gbc_lblNewLabel_1.anchor = GridBagConstraints.EAST;
 		gbc_lblNewLabel_1.insets = new Insets(0, 0, 5, 5);
-		gbc_lblNewLabel_1.gridx = 0;
-		gbc_lblNewLabel_1.gridy = 1;
+		gbc_lblNewLabel_1.gridx = 2;
+		gbc_lblNewLabel_1.gridy = 4;
 		contentPane.add(lblNewLabel_1, gbc_lblNewLabel_1);
 		
 		txt_ip = new JTextField();
 		txt_ip.setText("127.0.0.1");
 		GridBagConstraints gbc_txt_ip = new GridBagConstraints();
-		gbc_txt_ip.insets = new Insets(0, 0, 5, 0);
+		gbc_txt_ip.insets = new Insets(0, 0, 5, 5);
 		gbc_txt_ip.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txt_ip.gridx = 1;
-		gbc_txt_ip.gridy = 1;
+		gbc_txt_ip.gridx = 3;
+		gbc_txt_ip.gridy = 4;
 		contentPane.add(txt_ip, gbc_txt_ip);
 		txt_ip.setColumns(10);
 		
@@ -121,41 +186,9 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 		GridBagConstraints gbc_lblNewLabel_2 = new GridBagConstraints();
 		gbc_lblNewLabel_2.anchor = GridBagConstraints.EAST;
 		gbc_lblNewLabel_2.insets = new Insets(0, 0, 5, 5);
-		gbc_lblNewLabel_2.gridx = 0;
-		gbc_lblNewLabel_2.gridy = 2;
+		gbc_lblNewLabel_2.gridx = 4;
+		gbc_lblNewLabel_2.gridy = 4;
 		contentPane.add(lblNewLabel_2, gbc_lblNewLabel_2);
-		
-		txt_porta = new JTextField();
-		txt_porta.setText("1818");
-		GridBagConstraints gbc_txt_porta = new GridBagConstraints();
-		gbc_txt_porta.insets = new Insets(0, 0, 5, 0);
-		gbc_txt_porta.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txt_porta.gridx = 1;
-		gbc_txt_porta.gridy = 2;
-		contentPane.add(txt_porta, gbc_txt_porta);
-		txt_porta.setColumns(10);
-		
-		JLabel lblNewLabel_3 = new JLabel("Contexto:");
-		GridBagConstraints gbc_lblNewLabel_3 = new GridBagConstraints();
-		gbc_lblNewLabel_3.gridwidth = 2;
-		gbc_lblNewLabel_3.insets = new Insets(0, 0, 5, 0);
-		gbc_lblNewLabel_3.gridx = 0;
-		gbc_lblNewLabel_3.gridy = 3;
-		contentPane.add(lblNewLabel_3, gbc_lblNewLabel_3);
-		
-		JButton btn_servidor = new JButton("Servidor");
-		btn_servidor.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				//Chama a função servidor
-				Servidor();
-			}
-		});
-		GridBagConstraints gbc_btn_servidor = new GridBagConstraints();
-		gbc_btn_servidor.gridwidth = 2;
-		gbc_btn_servidor.insets = new Insets(0, 0, 5, 0);
-		gbc_btn_servidor.gridx = 0;
-		gbc_btn_servidor.gridy = 4;
-		contentPane.add(btn_servidor, gbc_btn_servidor);
 		
 		JButton btn_cliente = new JButton("Cliente");
 		btn_cliente.addActionListener(new ActionListener() {
@@ -164,19 +197,28 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 				Cliente();
 			}
 		});
+		
+		txt_porta = new JTextField();
+		txt_porta.setText("1818");
+		GridBagConstraints gbc_txt_porta = new GridBagConstraints();
+		gbc_txt_porta.insets = new Insets(0, 0, 5, 0);
+		gbc_txt_porta.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txt_porta.gridx = 5;
+		gbc_txt_porta.gridy = 4;
+		contentPane.add(txt_porta, gbc_txt_porta);
+		txt_porta.setColumns(10);
 		GridBagConstraints gbc_btn_cliente = new GridBagConstraints();
 		gbc_btn_cliente.insets = new Insets(0, 0, 5, 0);
-		gbc_btn_cliente.gridwidth = 2;
-		gbc_btn_cliente.gridx = 0;
-		gbc_btn_cliente.gridy = 5;
+		gbc_btn_cliente.gridx = 5;
+		gbc_btn_cliente.gridy = 6;
 		contentPane.add(btn_cliente, gbc_btn_cliente);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
-		gbc_scrollPane.gridwidth = 2;
+		gbc_scrollPane.gridwidth = 6;
 		gbc_scrollPane.fill = GridBagConstraints.BOTH;
 		gbc_scrollPane.gridx = 0;
-		gbc_scrollPane.gridy = 6;
+		gbc_scrollPane.gridy = 8;
 		contentPane.add(scrollPane, gbc_scrollPane);
 		
 		lista_arquivos = new JTable();
