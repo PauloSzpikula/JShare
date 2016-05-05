@@ -13,6 +13,11 @@ public class ModeloCliente extends AbstractTableModel {
 	private ArrayList<Cliente> lista = new ArrayList<Cliente>();
 	
 	
+	public void pega(Cliente c) {
+		lista.add(c);
+	}
+	
+	
 	public int getColumnCount() {
 		return 3; // NOME, IP, PORTA
 	}
@@ -46,7 +51,11 @@ public class ModeloCliente extends AbstractTableModel {
 		this.lista = lista;
 		super.fireTableDataChanged();
 	}
-
+	
+	public void atualizar() {
+		super.fireTableDataChanged();
+	}
+	
 	@Override
 	public String getColumnName (int col) {
 		

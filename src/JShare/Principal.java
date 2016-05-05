@@ -54,6 +54,7 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 	private JTable lista_arquivos;
 	private JTextField textField;
 	private JTextField txt_porta_concentrador;
+	private JTable tb_clientes;
 	
 	// Registo onde o objeto exportado será buscado pelo nome.
 	private Registry registro;
@@ -73,6 +74,7 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 		
 	// Modelo de Clientes
 	private ModeloCliente modelo_cliente = new ModeloCliente();
+	
 	
 	
 	
@@ -105,8 +107,8 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[]{46, 112, 44, 169, 0, 0};
 		gbl_contentPane.rowHeights = new int[]{0, 0, 0, 22, 0, 0, 0, 0, 0, 0};
-		gbl_contentPane.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, 0.0, 1.0};
-		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+		gbl_contentPane.columnWeights = new double[]{1.0, 0.0, 0.0, 1.0, 0.0, 1.0};
+		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE};
 		contentPane.setLayout(gbl_contentPane);
 		
 		JButton btn_servidor = new JButton("Conectar no concentrador");
@@ -193,6 +195,8 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 			public void actionPerformed(ActionEvent e) {
 				//Chama a função cliente
 				Cliente();
+				modelo_cliente.pega(cliente);
+				modelo_cliente.atualizar();
 			}
 		});
 		GridBagConstraints gbc_btn_cliente = new GridBagConstraints();
@@ -218,6 +222,19 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 		gbc_btnDesconectar.gridx = 5;
 		gbc_btnDesconectar.gridy = 4;
 		contentPane.add(btnDesconectar, gbc_btnDesconectar);
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		GridBagConstraints gbc_scrollPane_1 = new GridBagConstraints();
+		gbc_scrollPane_1.gridwidth = 6;
+		gbc_scrollPane_1.insets = new Insets(0, 0, 5, 5);
+		gbc_scrollPane_1.fill = GridBagConstraints.BOTH;
+		gbc_scrollPane_1.gridx = 0;
+		gbc_scrollPane_1.gridy = 6;
+		contentPane.add(scrollPane_1, gbc_scrollPane_1);
+		
+		tb_clientes = new JTable();
+		scrollPane_1.setViewportView(tb_clientes);
+		tb_clientes.setModel(modelo_cliente);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
@@ -263,6 +280,7 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 			servidor = (IServer) registro.lookup(IServer.NOME_SERVICO);
 			// solicita o registro do cliente no servidor
 			registrarCliente(cliente); 
+			
 			
 			Mensagem("Cliente conectado!");
 				
