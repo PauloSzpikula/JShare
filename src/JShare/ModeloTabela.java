@@ -12,6 +12,10 @@ import br.dagostini.jshare.comun.Cliente;
 
 public class ModeloTabela extends AbstractTableModel implements TableModel{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Object[][] matriz;
 	private int linhas;
 	
@@ -36,6 +40,8 @@ public class ModeloTabela extends AbstractTableModel implements TableModel{
 				linha++;
 			}
 		}
+		//atualiza o modelo na tabela
+		atualiza();
 	}
 
 	@Override
@@ -51,6 +57,10 @@ public class ModeloTabela extends AbstractTableModel implements TableModel{
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		return matriz[rowIndex][columnIndex];
+	}
+	
+	public void atualiza(){
+		super.fireTableDataChanged();
 	}
 	
 	 @Override
