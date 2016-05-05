@@ -24,15 +24,19 @@ import javax.swing.JButton;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import br.dagostini.jshare.comun.IServer;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
@@ -44,13 +48,23 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 	private IServer servidor;
 	private JPanel contentPane;
 	private JTextField txt_nome;
-	private JTextField txt_ip;
-	private JTextField txt_porta;
 	private JTable lista_arquivos;
 	private JTextField textField;
-	private JTextField textField_1;
+	private JTextField txt_porta_concentrador;
 	
 
+	
+	
+	// todos os clientes conectados no servidor.
+	private Map<String, Cliente> mapaClientes = new HashMap<>();
+	
+	// Registo onde o objeto exportado será buscado pelo nome.
+	private Registry registro;
+	
+	
+	
+	
+	
 	/**
 	 * Launch the application.
 	 */
@@ -91,7 +105,7 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 		gbc_lblNewLabel_4.gridy = 0;
 		contentPane.add(lblNewLabel_4, gbc_lblNewLabel_4);
 		
-		JButton btn_servidor = new JButton("Conectar");
+		JButton btn_servidor = new JButton("Conectar no concentrador");
 		btn_servidor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//Chama a função servidor
@@ -124,17 +138,16 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 		gbc_lblPorta.gridy = 1;
 		contentPane.add(lblPorta, gbc_lblPorta);
 		
-		textField_1 = new JTextField();
-		textField_1.setText("1818");
-		GridBagConstraints gbc_textField_1 = new GridBagConstraints();
-		gbc_textField_1.insets = new Insets(0, 0, 5, 0);
-		gbc_textField_1.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_1.gridx = 5;
-		gbc_textField_1.gridy = 1;
-		contentPane.add(textField_1, gbc_textField_1);
-		textField_1.setColumns(10);
+		txt_porta_concentrador = new JTextField();
+		txt_porta_concentrador.setText("1818");
+		GridBagConstraints gbc_txt_porta_concentrador = new GridBagConstraints();
+		gbc_txt_porta_concentrador.insets = new Insets(0, 0, 5, 0);
+		gbc_txt_porta_concentrador.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txt_porta_concentrador.gridx = 5;
+		gbc_txt_porta_concentrador.gridy = 1;
+		contentPane.add(txt_porta_concentrador, gbc_txt_porta_concentrador);
+		txt_porta_concentrador.setColumns(10);
 		GridBagConstraints gbc_btn_servidor = new GridBagConstraints();
-		gbc_btn_servidor.anchor = GridBagConstraints.EAST;
 		gbc_btn_servidor.insets = new Insets(0, 0, 5, 0);
 		gbc_btn_servidor.gridx = 5;
 		gbc_btn_servidor.gridy = 2;
@@ -151,7 +164,7 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 		JLabel lblNewLabel = new JLabel("Nome:");
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
-		gbc_lblNewLabel.gridx = 0;
+		gbc_lblNewLabel.gridx = 2;
 		gbc_lblNewLabel.gridy = 4;
 		contentPane.add(lblNewLabel, gbc_lblNewLabel);
 		
@@ -160,58 +173,46 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 		GridBagConstraints gbc_txt_nome = new GridBagConstraints();
 		gbc_txt_nome.insets = new Insets(0, 0, 5, 5);
 		gbc_txt_nome.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txt_nome.gridx = 1;
+		gbc_txt_nome.gridx = 3;
 		gbc_txt_nome.gridy = 4;
 		contentPane.add(txt_nome, gbc_txt_nome);
 		txt_nome.setColumns(10);
 		
-		JLabel lblNewLabel_1 = new JLabel("IP");
-		GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
-		gbc_lblNewLabel_1.insets = new Insets(0, 0, 5, 5);
-		gbc_lblNewLabel_1.gridx = 2;
-		gbc_lblNewLabel_1.gridy = 4;
-		contentPane.add(lblNewLabel_1, gbc_lblNewLabel_1);
-		
-		txt_ip = new JTextField();
-		txt_ip.setText("127.0.0.1");
-		GridBagConstraints gbc_txt_ip = new GridBagConstraints();
-		gbc_txt_ip.insets = new Insets(0, 0, 5, 5);
-		gbc_txt_ip.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txt_ip.gridx = 3;
-		gbc_txt_ip.gridy = 4;
-		contentPane.add(txt_ip, gbc_txt_ip);
-		txt_ip.setColumns(10);
-		
-		JLabel lblNewLabel_2 = new JLabel("Porta");
-		GridBagConstraints gbc_lblNewLabel_2 = new GridBagConstraints();
-		gbc_lblNewLabel_2.anchor = GridBagConstraints.EAST;
-		gbc_lblNewLabel_2.insets = new Insets(0, 0, 5, 5);
-		gbc_lblNewLabel_2.gridx = 4;
-		gbc_lblNewLabel_2.gridy = 4;
-		contentPane.add(lblNewLabel_2, gbc_lblNewLabel_2);
-		
-		JButton btn_cliente = new JButton("Cliente");
+		JButton btn_cliente = new JButton("Conectar");
 		btn_cliente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//Chama a função cliente
 				Cliente();
 			}
 		});
-		
-		txt_porta = new JTextField();
-		txt_porta.setText("1818");
-		GridBagConstraints gbc_txt_porta = new GridBagConstraints();
-		gbc_txt_porta.insets = new Insets(0, 0, 5, 0);
-		gbc_txt_porta.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txt_porta.gridx = 5;
-		gbc_txt_porta.gridy = 4;
-		contentPane.add(txt_porta, gbc_txt_porta);
-		txt_porta.setColumns(10);
 		GridBagConstraints gbc_btn_cliente = new GridBagConstraints();
 		gbc_btn_cliente.insets = new Insets(0, 0, 5, 0);
 		gbc_btn_cliente.gridx = 5;
 		gbc_btn_cliente.gridy = 6;
 		contentPane.add(btn_cliente, gbc_btn_cliente);
+		
+		JButton btnDesconectar = new JButton("Desconectar");
+		btnDesconectar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				Cliente bosta = new Cliente();
+				cliente.setNome(txt_nome.getText());
+				cliente.setIp(LerIp());
+				cliente.setPorta(Integer.parseInt(txt_porta_concentrador.getText()));
+				
+				try {
+					desconectar(bosta);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		GridBagConstraints gbc_btnDesconectar = new GridBagConstraints();
+		gbc_btnDesconectar.insets = new Insets(0, 0, 5, 0);
+		gbc_btnDesconectar.gridx = 5;
+		gbc_btnDesconectar.gridy = 7;
+		contentPane.add(btnDesconectar, gbc_btnDesconectar);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
@@ -227,14 +228,13 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 	
 	public void Servidor() {
 		Mensagem("Iniciando o servidor!");
-		MontaCliente();
 		try {
 			//instânciando um servidor
 			servidor = (IServer) UnicastRemoteObject.exportObject(this, 0);
 			//registrando um servidor
-			Registry registro = LocateRegistry.createRegistry(cliente.getPorta());
+			Registry registry = LocateRegistry.createRegistry(Integer.parseInt(txt_porta_concentrador.getText()));
 			//registrando o nome do serviço na rede
-			registro.rebind(IServer.NOME_SERVICO, servidor);
+			registry.rebind(IServer.NOME_SERVICO, servidor);
 			
 			Mensagem("Aguardando as conexções!");
 				
@@ -252,12 +252,11 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 		MontaCliente();
 		try {
 			//registrando um cliente
-			Registry registry = LocateRegistry.getRegistry(cliente.getIp(), cliente.getPorta());
+			registro = LocateRegistry.getRegistry(cliente.getIp(), cliente.getPorta());
 			//registrando o nome do serviço na rede
-			servidor = (IServer) registry.lookup(IServer.NOME_SERVICO);
+			servidor = (IServer) registro.lookup(IServer.NOME_SERVICO);
 			// solicita o registro do cliente no servidor
 			registrarCliente(cliente); 
-			
 			
 			Mensagem("Cliente conectado!");
 				
@@ -270,10 +269,22 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 		}
 	}
 
-	public void MontaCliente() {
+	private String LerIp() {
+		InetAddress IP;
+		String IPString = "127.0.0.1";
+		try {
+			IP = InetAddress.getLocalHost();
+			IPString = IP.getHostAddress();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		return IPString;
+	}
+	
+	private void MontaCliente() {
 		cliente.setNome(txt_nome.getText());
-		cliente.setIp(txt_ip.getText());
-		cliente.setPorta(Integer.parseInt(txt_porta.getText()));
+		cliente.setIp(LerIp());
+		cliente.setPorta(Integer.parseInt(txt_porta_concentrador.getText()));
 	}
 	
 	// manda uma mensagem
@@ -313,7 +324,17 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 
 	@Override
 	public void desconectar(Cliente c) throws RemoteException {
-		// TODO Auto-generated method stub
+		Mensagem("Desconectando.");
+
+		try {
+			UnicastRemoteObject.unexportObject(this, true);
+			//UnicastRemoteObject.unexportObject(registro, true);
+
+			Mensagem("Serviço encerrado.");
+
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 		
 	}
 }
