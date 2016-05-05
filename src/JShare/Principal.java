@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import br.dagostini.jshare.comum.pojos.Arquivo;
+import br.dagostini.jshare.comum.pojos.Diretorio;
 import br.dagostini.jshare.comun.Cliente;
 
 import java.awt.GridBagLayout;
@@ -24,6 +25,7 @@ import javax.swing.JButton;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.Remote;
@@ -31,6 +33,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,15 +55,24 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 	private JTextField textField;
 	private JTextField txt_porta_concentrador;
 	
-
-	
-	
-	// todos os clientes conectados no servidor.
-	private Map<String, Cliente> mapaClientes = new HashMap<>();
-	
 	// Registo onde o objeto exportado será buscado pelo nome.
 	private Registry registro;
 	
+	//Diretório padrão uploads
+	public String uploads = "c:\\jshare\\Uploads"; 
+	
+	// Map<Integer, String> mapaBasico;
+	Map<Cliente, List<Arquivo>> mapa = new HashMap<Cliente, List<Arquivo>>();
+
+	// todos os clientes conectados no servidor.
+	private Map<String, Cliente> mapaClientes = new HashMap<>();
+	
+
+	// MOdelo da Tabela
+	private ModeloTabela modelo_tabela = new ModeloTabela(mapa);
+		
+	// Modelo de Clientes
+	private ModeloCliente modelo_cliente = new ModeloCliente();
 	
 	
 	
@@ -97,14 +109,6 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 		contentPane.setLayout(gbl_contentPane);
 		
-		JLabel lblNewLabel_4 = new JLabel("CONCENTRADOR");
-		GridBagConstraints gbc_lblNewLabel_4 = new GridBagConstraints();
-		gbc_lblNewLabel_4.gridwidth = 6;
-		gbc_lblNewLabel_4.insets = new Insets(0, 0, 5, 0);
-		gbc_lblNewLabel_4.gridx = 0;
-		gbc_lblNewLabel_4.gridy = 0;
-		contentPane.add(lblNewLabel_4, gbc_lblNewLabel_4);
-		
 		JButton btn_servidor = new JButton("Conectar no concentrador");
 		btn_servidor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -113,10 +117,17 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 			}
 		});
 		
+		JLabel lblNewLabel_4 = new JLabel("CONCENTRADOR");
+		GridBagConstraints gbc_lblNewLabel_4 = new GridBagConstraints();
+		gbc_lblNewLabel_4.insets = new Insets(0, 0, 5, 5);
+		gbc_lblNewLabel_4.gridx = 0;
+		gbc_lblNewLabel_4.gridy = 0;
+		contentPane.add(lblNewLabel_4, gbc_lblNewLabel_4);
+		
 		JLabel lblNewLabel_3 = new JLabel("IP:");
 		GridBagConstraints gbc_lblNewLabel_3 = new GridBagConstraints();
 		gbc_lblNewLabel_3.insets = new Insets(0, 0, 5, 5);
-		gbc_lblNewLabel_3.gridx = 2;
+		gbc_lblNewLabel_3.gridx = 0;
 		gbc_lblNewLabel_3.gridy = 1;
 		contentPane.add(lblNewLabel_3, gbc_lblNewLabel_3);
 		
@@ -125,7 +136,7 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 		GridBagConstraints gbc_textField = new GridBagConstraints();
 		gbc_textField.insets = new Insets(0, 0, 5, 5);
 		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField.gridx = 3;
+		gbc_textField.gridx = 1;
 		gbc_textField.gridy = 1;
 		contentPane.add(textField, gbc_textField);
 		textField.setColumns(10);
@@ -134,16 +145,16 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 		GridBagConstraints gbc_lblPorta = new GridBagConstraints();
 		gbc_lblPorta.anchor = GridBagConstraints.EAST;
 		gbc_lblPorta.insets = new Insets(0, 0, 5, 5);
-		gbc_lblPorta.gridx = 4;
+		gbc_lblPorta.gridx = 2;
 		gbc_lblPorta.gridy = 1;
 		contentPane.add(lblPorta, gbc_lblPorta);
 		
 		txt_porta_concentrador = new JTextField();
 		txt_porta_concentrador.setText("1818");
 		GridBagConstraints gbc_txt_porta_concentrador = new GridBagConstraints();
-		gbc_txt_porta_concentrador.insets = new Insets(0, 0, 5, 0);
+		gbc_txt_porta_concentrador.insets = new Insets(0, 0, 5, 5);
 		gbc_txt_porta_concentrador.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txt_porta_concentrador.gridx = 5;
+		gbc_txt_porta_concentrador.gridx = 3;
 		gbc_txt_porta_concentrador.gridy = 1;
 		contentPane.add(txt_porta_concentrador, gbc_txt_porta_concentrador);
 		txt_porta_concentrador.setColumns(10);
@@ -155,8 +166,7 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 		
 		JLabel lblNewLabel_5 = new JLabel("CLIENTE");
 		GridBagConstraints gbc_lblNewLabel_5 = new GridBagConstraints();
-		gbc_lblNewLabel_5.gridwidth = 6;
-		gbc_lblNewLabel_5.insets = new Insets(0, 0, 5, 0);
+		gbc_lblNewLabel_5.insets = new Insets(0, 0, 5, 5);
 		gbc_lblNewLabel_5.gridx = 0;
 		gbc_lblNewLabel_5.gridy = 3;
 		contentPane.add(lblNewLabel_5, gbc_lblNewLabel_5);
@@ -164,7 +174,7 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 		JLabel lblNewLabel = new JLabel("Nome:");
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
-		gbc_lblNewLabel.gridx = 2;
+		gbc_lblNewLabel.gridx = 0;
 		gbc_lblNewLabel.gridy = 4;
 		contentPane.add(lblNewLabel, gbc_lblNewLabel);
 		
@@ -173,7 +183,7 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 		GridBagConstraints gbc_txt_nome = new GridBagConstraints();
 		gbc_txt_nome.insets = new Insets(0, 0, 5, 5);
 		gbc_txt_nome.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txt_nome.gridx = 3;
+		gbc_txt_nome.gridx = 1;
 		gbc_txt_nome.gridy = 4;
 		contentPane.add(txt_nome, gbc_txt_nome);
 		txt_nome.setColumns(10);
@@ -186,22 +196,17 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 			}
 		});
 		GridBagConstraints gbc_btn_cliente = new GridBagConstraints();
-		gbc_btn_cliente.insets = new Insets(0, 0, 5, 0);
-		gbc_btn_cliente.gridx = 5;
-		gbc_btn_cliente.gridy = 6;
+		gbc_btn_cliente.insets = new Insets(0, 0, 5, 5);
+		gbc_btn_cliente.gridx = 3;
+		gbc_btn_cliente.gridy = 4;
 		contentPane.add(btn_cliente, gbc_btn_cliente);
 		
 		JButton btnDesconectar = new JButton("Desconectar");
 		btnDesconectar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
-				Cliente bosta = new Cliente();
-				cliente.setNome(txt_nome.getText());
-				cliente.setIp(LerIp());
-				cliente.setPorta(Integer.parseInt(txt_porta_concentrador.getText()));
-				
+								
 				try {
-					desconectar(bosta);
+					desconectar(cliente);
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -211,7 +216,7 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 		GridBagConstraints gbc_btnDesconectar = new GridBagConstraints();
 		gbc_btnDesconectar.insets = new Insets(0, 0, 5, 0);
 		gbc_btnDesconectar.gridx = 5;
-		gbc_btnDesconectar.gridy = 7;
+		gbc_btnDesconectar.gridy = 4;
 		contentPane.add(btnDesconectar, gbc_btnDesconectar);
 		
 		JScrollPane scrollPane = new JScrollPane();
@@ -224,6 +229,7 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 		
 		lista_arquivos = new JTable();
 		scrollPane.setViewportView(lista_arquivos);
+		lista_arquivos.setModel(modelo_tabela);
 	}
 	
 	public void Servidor() {
@@ -232,9 +238,9 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 			//instânciando um servidor
 			servidor = (IServer) UnicastRemoteObject.exportObject(this, 0);
 			//registrando um servidor
-			Registry registry = LocateRegistry.createRegistry(Integer.parseInt(txt_porta_concentrador.getText()));
+			registro = LocateRegistry.createRegistry(Integer.parseInt(txt_porta_concentrador.getText()));
 			//registrando o nome do serviço na rede
-			registry.rebind(IServer.NOME_SERVICO, servidor);
+			registro.rebind(IServer.NOME_SERVICO, servidor);
 			
 			Mensagem("Aguardando as conexções!");
 				
@@ -292,6 +298,41 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 		System.out.println(msg);
 	}
 
+	
+	public List<Arquivo> listaDosMeusArquivos() {
+		File dirStart = new File(uploads);
+
+		List<Arquivo> listaArquivos = new ArrayList<>();
+		List<Diretorio> listaDiretorios = new ArrayList<>();
+		for (File file : dirStart.listFiles()) {
+			if (file.isFile()) {
+				Arquivo arq = new Arquivo();
+				arq.setNome(file.getName());
+				arq.setTamanho(file.length());
+				listaArquivos.add(arq);
+			} else {
+				Diretorio dir = new Diretorio();
+				dir.setNome(file.getName());
+				listaDiretorios.add(dir);				
+			}
+		}
+		
+		Mensagem("Arquivos Encontrados:");
+		for (Arquivo arq : listaArquivos) {
+			Mensagem("\t" + arq.getTamanho() + "\t" + arq.getNome());
+		}
+		
+		return listaArquivos;
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
@@ -328,8 +369,6 @@ public class Principal extends JFrame implements Remote, Runnable, IServer {
 
 		try {
 			UnicastRemoteObject.unexportObject(this, true);
-			//UnicastRemoteObject.unexportObject(registro, true);
-
 			Mensagem("Serviço encerrado.");
 
 		} catch (RemoteException e) {

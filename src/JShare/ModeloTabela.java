@@ -53,4 +53,21 @@ public class ModeloTabela extends AbstractTableModel implements TableModel{
 		return matriz[rowIndex][columnIndex];
 	}
 	
+	 @Override
+	 public String getColumnName (int col) {
+       switch (col) {
+       case 0:
+           return "Nome";
+       case 1:
+           return "Ip";
+       case 2:
+       	return "Porta";
+       case 3:
+       	return "Arquivo";
+       case 4:
+       	return "Tamanho";
+       default:
+           return "Erro";
+       }
+   }
 }
